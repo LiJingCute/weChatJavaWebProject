@@ -45,10 +45,10 @@ import cn.lijingCute.util.Util;
 
 public class WxService {
 	private static final String APPKEY="1fec136dbd19f44743803f89bd55ca62";
-	private static final String GET_TOKEN_URL="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
+	public static final String GET_TOKEN_URL="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx200a0055856f53c7&secret=4ca1bc75a9039be85ecc133dbff1916b";
 	//微信公众号
-	private static final String APPID="wxb6777fffdf5b64a4";
-	private static final String APPSECRET="6b55d3bb4d9c5373c8a30915d900ca13";
+	private static final String APPID="wx200a0055856f53c7";
+	private static final String APPSECRET="4ca1bc75a9039be85ecc133dbff1916b";
 	//百度AI
 	public static final String APP_ID = "11519092";
 	public static final String API_KEY = "q3TlGWWqEBG9uGvlFIBtpvY5";
@@ -56,8 +56,29 @@ public class WxService {
 	
 	//用于存储token
 	private static AccessToken at;
-	
 	private static final String TOKEN = "nice";
+	
+	//获取token
+	private static void getToken() {
+		String url = GET_TOKEN_URL.replace("APPID", APPID).replace("APPSECRET", APPSECRET);
+		String tokenStr = Util.get(url);
+		JSONObject jsonObject = JSONObject.fromObject(tokenStr);
+		String token = jsonObject.getString("access_token");
+		String expireIn = jsonObject.getString("expires_in");
+		//创建token对象,并存起来。
+		at = new AccessToken(token, expireIn);
+	}
+	
+	/**
+	 * 向处暴露的获取token的方法
+	 */
+	public static String getAccessToken() {
+		if(at==null||at.isExpired()) {
+			getToken();
+		}
+		return at.getAccessToken();
+	}
+	
 	//验证签名
 	public static boolean check(String timestamp,String nonce,String signature) {
 		 //1）将token、timestamp、nonce三个参数进行字典序排序 
@@ -135,9 +156,9 @@ public class WxService {
 			case "link":
 				
 				break;
-//			case "event":
-//				msg = dealEvent(requestMap);
-//				break;
+			case "event":
+				msg = dealEvent(requestMap);
+				break;
 			default:
 				break;
 		}
@@ -179,18 +200,20 @@ public class WxService {
 	 * 处理事件推送
 	 * @param requestMap
 	 */
-//	private static BaseMessage dealEvent(Map<String, String> requestMap) {
-//		String event = requestMap.get("Event");
-//		switch (event) {
-//			case "CLICK":
-//				return dealClick(requestMap);
-//			case "VIEW":
-//				return dealView(requestMap);
-//			default:
-//				break;
-//		}
-//		return null;
-//	}
+	private static BaseMessage dealEvent(Map<String, String> requestMap) {
+		String event = requestMap.get("Event");
+		switch (event) {
+			case "CLICK":
+				return dealClick(requestMap);
+			case "VIEW":
+				return dealView(requestMap);
+			default:
+				break;
+		}
+		return null;
+	}
+
+
 
 	/**
 	 * 处理view类型的按钮的菜单
@@ -205,21 +228,21 @@ public class WxService {
 	 * 处理click菜单
 	 * @param requestMap
 	 */
-//	private static BaseMessage dealClick(Map<String, String> requestMap) {
-//		String key = requestMap.get("EventKey");
-//		switch (key) {
-//			//点击一菜单点
-//			case "1":
-//				//处理点击了第一个一级菜单
-//				return new TextMessage(requestMap, "你点了一点第一个一级菜单");
-//			case "32":
-//				//处理点击了第三个一级菜单的第二个子菜单
-//				break;
-//			default:
-//				break;
-//		}
-//		return null;
-//	}
+	private static BaseMessage dealClick(Map<String, String> requestMap) {
+		String key = requestMap.get("EventKey");
+		switch (key) {
+			//点击一菜单点
+			case "1":
+				//处理点击了第一个一级菜单
+				return new TextMessage(requestMap, "你点了一点第一个一级菜单");
+			case "32":
+				//处理点击了第三个一级菜单的第二个子菜单
+				break;
+			default:
+				break;
+		}
+		return null;
+	}
 
 	/**
 	 * 把消息对象处理为xml数据包

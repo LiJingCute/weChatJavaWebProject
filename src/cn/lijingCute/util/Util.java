@@ -66,7 +66,6 @@ public class Util {
 	 * 向指定的地址发送get请求
 	 * 
 	 * @param url
-	 * @return by 罗召勇 Q群193557337
 	 */
 	public static String get(String url) {
 		try {

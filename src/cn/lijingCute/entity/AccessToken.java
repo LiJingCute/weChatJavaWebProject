@@ -1,8 +1,9 @@
 package cn.lijingCute.entity;
 
 public class AccessToken {
-
+	//获取token	
 	private String accessToken;
+	//过期时间	
 	private long expireTime;
 
 	public String getAccessToken() {
