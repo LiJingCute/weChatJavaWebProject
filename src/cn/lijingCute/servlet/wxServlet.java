@@ -18,49 +18,41 @@ import cn.lijingCute.service.WxService;
 @WebServlet("/wxServlet")
 public class wxServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    public wxServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		/*
-		 *  signature 	Î¢ĞÅ¼ÓÃÜÇ©Ãû£¬signature½áºÏÁË¿ª·¢ÕßÌîĞ´µÄtoken²ÎÊıºÍÇëÇóÖĞµÄtimestamp²ÎÊı¡¢nonce²ÎÊı¡£
-			timestamp 	Ê±¼ä´Á
-			nonce 		Ëæ»úÊı
-			echostr 	Ëæ»ú×Ö·û´®
+		/**
+		 * signature	å¾®ä¿¡åŠ å¯†ç­¾åï¼Œsignatureç»“åˆäº†å¼€å‘è€…å¡«å†™çš„tokenå‚æ•°å’Œè¯·æ±‚ä¸­çš„timestampå‚æ•°ã€nonceå‚æ•°ã€‚
+			timestamp	æ—¶é—´æˆ³
+			nonce	éšæœºæ•°
+			echostr	éšæœºå­—ç¬¦ä¸²
 		 */
 		String signature = request.getParameter("signature");
 		String timestamp = request.getParameter("timestamp");
 		String nonce = request.getParameter("nonce");
 		String echostr = request.getParameter("echostr");
-//		System.out.println(signature);
-//		System.out.println(timestamp);
-//		System.out.println(nonce);
-//		System.out.println(echostr);
-		//Ğ£ÑéÇ©Ãû		
-		if(WxService.check(timestamp,nonce,signature)){
-			PrintWriter pw = response.getWriter();
-			//Ô­Ñù·µ»Øechostr²ÎÊı	
-			pw.print(echostr);
-			pw.flush();
-			pw.close();
-			System.out.println("½ÓÈë³É¹¦");
+		//æ ¡éªŒè¯ç­¾å
+		if(WxService.check(timestamp,nonce,signature)) {
+			System.out.println("æ¥å…¥æˆåŠŸ");
+			PrintWriter out = response.getWriter();
+			//åŸæ ·è¿”å›echostrå‚æ•°
+			out.print(echostr);
+			out.flush();
+			out.close();
 		}else {
-			System.out.println("½ÓÈëÊ§°Ü");
+			System.out.println("æ¥å…¥å¤±è´¥");
 		}
-
 	}
 
-	//½ÓÊÕÏûÏ¢ºÍÊÂ¼şÍÆËÍ	
+	/**
+	 * æ¥æ”¶æ¶ˆæ¯å’Œäº‹ä»¶æ¨é€
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf8");
 		response.setCharacterEncoding("utf8");
-		//´¦ÀíÏûÏ¢ºÍÊÂ¼şÍÆËÍ
+		//å¤„ç†æ¶ˆæ¯å’Œäº‹ä»¶æ¨é€
 		Map<String, String> requestMap = WxService.parseRequest(request.getInputStream());
 		System.out.println(requestMap);
-		//×¼±¸»Ø¸´µÄÊı¾İ°ü
+		//å‡†å¤‡å›å¤çš„æ•°æ®åŒ…
 		String respXml = WxService.getRespose(requestMap);
 		System.out.println(respXml);
 		PrintWriter out = response.getWriter();
@@ -70,6 +62,3 @@ public class wxServlet extends HttpServlet {
 	}
 
 }
-
-
-

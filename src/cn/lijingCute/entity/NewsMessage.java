@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("xml")
+//ע注解将其变为item标签的形式
 public class NewsMessage extends BaseMessage {
 	
 	@XStreamAlias("ArticleCount")

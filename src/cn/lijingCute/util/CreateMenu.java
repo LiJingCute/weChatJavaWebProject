@@ -11,26 +11,26 @@ import cn.lijingCute.service.WxService;
 public class CreateMenu {
 
 	public static void main(String[] args) {
-		//²Ëµ¥¶ÔÏó
+		//èœå•å¯¹è±¡
 		Button btn = new Button();
-		//µÚÒ»¸öÒ»¼¶²Ëµ¥
-		btn.getButton().add(new ClickButton("Ò»¼¶µã»÷", "1"));
-		//µÚ¶ş¸öÒ»¼¶²Ëµ¥
-		btn.getButton().add(new ViewButton("Ò»¼¶Ìø×ª", "http://www.baidu.com"));
-		//´´½¨µÚÈı¸öÒ»¼¶²Ëµ¥
-		SubButton sb = new SubButton("ÓĞ×Ó²Ëµ¥");
-		//ÎªµÚÈı¸öÒ»¼¶²Ëµ¥Ôö¼Ó×Ó²Ëµ¥
-		sb.getSub_button().add(new PhotoOrAlbumButton("´«Í¼", "31"));
-		sb.getSub_button().add(new ClickButton("µã»÷", "32"));
-		sb.getSub_button().add(new ViewButton("ÍøÒ×ĞÂÎÅ", "http://news.163.com"));
-		//¼ÓÈëµÚÈı¸öÒ»¼¶²Ëµ¥
+		//ç¬¬ä¸€ä¸ªä¸€çº§èœå•
+		btn.getButton().add(new ClickButton("ç‚¹å‡»èœå•", "1"));
+		//ç¬¬äºŒä¸ªä¸€çº§èœå•
+		btn.getButton().add(new ViewButton("ç‚¹å‡»è·³è½¬", "http://www.baidu.com"));
+		//åˆ›å»ºç¬¬ä¸‰ä¸ªä¸€çº§èœå•
+		SubButton sb = new SubButton("ç‚¹å‡»å‡ºç°å­èœå•");
+		//ä¸ºç¬¬ä¸‰ä¸ªä¸€çº§èœå•å¢åŠ å­èœå•
+		sb.getSub_button().add(new PhotoOrAlbumButton("ä¼ å›¾", "31"));
+		sb.getSub_button().add(new ClickButton("ç‚¹å‡»", "32"));
+		sb.getSub_button().add(new ViewButton("ç½‘æ˜“æ–°é—»", "http://news.163.com"));
+		//åŠ å…¥ç¬¬ä¸‰ä¸ªä¸€çº§èœå•
 		btn.getButton().add(sb);
-		//×ªÎªjson
+		//è½¬ä¸ºjson
 		JSONObject jsonObject = JSONObject.fromObject(btn);
-		//×¼±¸url
+		//å‡†å¤‡url
 		String url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN";
 		url = url.replace("ACCESS_TOKEN", WxService.getAccessToken());
-		//·¢ËÍÇëÇó
+		//å‘é€è¯·æ±‚
 		String result = Util.post(url, jsonObject.toString());
 		System.out.println(result);
 		

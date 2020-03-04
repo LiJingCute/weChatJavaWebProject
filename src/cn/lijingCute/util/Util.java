@@ -27,11 +27,11 @@ public class Util {
 	public static final int DEF_READ_TIMEOUT = 30000;
 	public static String userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36";
 
-	// ÅäÖÃÉêÇëµÄKEY
+	// é…ç½®KEY
 	public static final String APPKEY = "*************************";
 	
 	/**
-	 * ÏòÖ¸¶¨µÄµØÖ··¢ËÍÒ»¸öpostÇëÇó£¬´ø×ÅdataÊı¾İ
+	 * å‘æŒ‡å®šçš„åœ°å€å‘é€ä¸€ä¸ªpostè¯·æ±‚ï¼Œå¸¦ç€dataæ•°æ®
 	 * 
 	 * @param url
 	 * @param data
@@ -40,14 +40,14 @@ public class Util {
 		try {
 			URL urlObj = new URL(url);
 			URLConnection connection = urlObj.openConnection();
-			// Òª·¢ËÍÊı¾İ³öÈ¥£¬±ØĞëÒªÉèÖÃÎª¿É·¢ËÍÊı¾İ×´Ì¬
+			// è¦å‘é€æ•°æ®å‡ºå»ï¼Œå¿…é¡»è¦è®¾ç½®ä¸ºå¯å‘é€æ•°æ®çŠ¶æ€
 			connection.setDoOutput(true);
-			// »ñÈ¡Êä³öÁ÷
+			// è·å–è¾“å‡ºæµ
 			OutputStream os = connection.getOutputStream();
-			// Ğ´³öÊı¾İ
+			// å†™å‡ºæ•°æ®
 			os.write(data.getBytes());
 			os.close();
-			// »ñÈ¡ÊäÈëÁ÷
+			// è·å–è¾“å…¥æµ
 			InputStream is = connection.getInputStream();
 			byte[] b = new byte[1024];
 			int len;
@@ -63,14 +63,12 @@ public class Util {
 	}
 
 	/**
-	 * ÏòÖ¸¶¨µÄµØÖ··¢ËÍgetÇëÇó
-	 * 
-	 * @param url
+	 * å‘æŒ‡å®šçš„åœ°å€å‘é€getè¯·æ±‚
 	 */
 	public static String get(String url) {
 		try {
 			URL urlObj = new URL(url);
-			// ¿ªÁ¬½Ó
+			// å¼€è¿æ¥
 			URLConnection connection = urlObj.openConnection();
 			InputStream is = connection.getInputStream();
 			byte[] b = new byte[1024];
@@ -89,12 +87,12 @@ public class Util {
 	/**
 	 *
 	 * @param strUrl
-	 *            ÇëÇóµØÖ·
+	 *            è¯·æ±‚åœ°å€
 	 * @param params
-	 *            ÇëÇó²ÎÊı
+	 *            è¯·æ±‚å‚æ•°
 	 * @param method
-	 *            ÇëÇó·½·¨
-	 * @return ÍøÂçÇëÇó×Ö·û´®
+	 *            è¯·æ±‚æ–¹æ³•
+	 * @return ç½‘ç»œè¯·æ±‚å­—ç¬¦ä¸²
 	 * @throws Exception
 	 */
 	public static String net(String strUrl, Map params, String method) throws Exception {
@@ -148,7 +146,7 @@ public class Util {
 		return rs;
 	}
 
-	// ½«mapĞÍ×ªÎªÇëÇó²ÎÊıĞÍ
+	// å°†mapå‹è½¬ä¸ºè¯·æ±‚å‚æ•°å‹
 	public static String urlencode(Map<String, Object> data) {
 		StringBuilder sb = new StringBuilder();
 		for (Map.Entry i : data.entrySet()) {

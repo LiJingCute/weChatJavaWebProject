@@ -44,62 +44,64 @@ import cn.lijingCute.util.Util;
 
 
 public class WxService {
+	//ï¿½Ê´ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½appkey	
 	private static final String APPKEY="1fec136dbd19f44743803f89bd55ca62";
+	//å¾®ä¿¡å…¬ä¼—å·
 	public static final String GET_TOKEN_URL="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx200a0055856f53c7&secret=4ca1bc75a9039be85ecc133dbff1916b";
-	//Î¢ĞÅ¹«ÖÚºÅ
 	private static final String APPID="wx200a0055856f53c7";
 	private static final String APPSECRET="4ca1bc75a9039be85ecc133dbff1916b";
-	//°Ù¶ÈAI
+	//ç™¾åº¦AI
 	public static final String APP_ID = "11519092";
 	public static final String API_KEY = "q3TlGWWqEBG9uGvlFIBtpvY5";
 	public static final String SECRET_KEY = "A14W5VRNG8my1GXYYAyNND0RjzBwxI8A";
 	
-	//ÓÃÓÚ´æ´¢token
+	//ç”¨äºå­˜å‚¨token
 	private static AccessToken at;
 	private static final String TOKEN = "nice";
 	
-	//»ñÈ¡token
+	//è·å–token
 	private static void getToken() {
 		String url = GET_TOKEN_URL.replace("APPID", APPID).replace("APPSECRET", APPSECRET);
 		String tokenStr = Util.get(url);
 		JSONObject jsonObject = JSONObject.fromObject(tokenStr);
 		String token = jsonObject.getString("access_token");
 		String expireIn = jsonObject.getString("expires_in");
-		//´´½¨token¶ÔÏó,²¢´æÆğÀ´¡£
+		//åˆ›å»ºtokenå¯¹è±¡,å¹¶å­˜èµ·æ¥ã€‚
 		at = new AccessToken(token, expireIn);
 	}
 	
 	/**
-	 * Ïò´¦±©Â¶µÄ»ñÈ¡tokenµÄ·½·¨
+	 * å‘å¤„æš´éœ²çš„è·å–tokençš„æ–¹æ³•
 	 */
 	public static String getAccessToken() {
+		//å¦‚æœatæ˜¯ç©ºæˆ–è€…è¿‡æœŸ è·å–token	
 		if(at==null||at.isExpired()) {
 			getToken();
 		}
 		return at.getAccessToken();
 	}
 	
-	//ÑéÖ¤Ç©Ãû
-	public static boolean check(String timestamp,String nonce,String signature) {
-		 //1£©½«token¡¢timestamp¡¢nonceÈı¸ö²ÎÊı½øĞĞ×ÖµäĞòÅÅĞò 
+	// éªŒè¯ç­¾å
+	public static boolean check(String timestamp, String nonce, String signature) {
+		 //1ï¼‰å°†tokenã€timestampã€nonceä¸‰ä¸ªå‚æ•°è¿›è¡Œå­—å…¸åºæ’åº 
 		String[] strs = new String[] {TOKEN,timestamp,nonce};
 		Arrays.sort(strs);
-		 //2£©½«Èı¸ö²ÎÊı×Ö·û´®Æ´½Ó³ÉÒ»¸ö×Ö·û´®½øĞĞsha1¼ÓÃÜ 
+		//2ï¼‰å°†ä¸‰ä¸ªå‚æ•°å­—ç¬¦ä¸²æ‹¼æ¥æˆä¸€ä¸ªå­—ç¬¦ä¸²è¿›è¡Œsha1åŠ å¯†
 		String str = strs[0]+strs[1]+strs[2];
 		String mysig = sha1(str);
-		 //3£©¿ª·¢Õß»ñµÃ¼ÓÃÜºóµÄ×Ö·û´®¿ÉÓësignature¶Ô±È£¬±êÊ¶¸ÃÇëÇóÀ´Ô´ÓÚÎ¢ĞÅ
+		 //3ï¼‰å¼€å‘è€…è·å¾—åŠ å¯†åçš„å­—ç¬¦ä¸²å¯ä¸signatureå¯¹æ¯”ï¼Œæ ‡è¯†è¯¥è¯·æ±‚æ¥æºäºå¾®ä¿¡
 		return mysig.equalsIgnoreCase(signature);
 	}
-	//sha1¼ÓÃÜ	
+	//è¿›è¡Œsha1åŠ å¯†
 	private static String sha1(String src){
 		try {
-			//»ñÈ¡Ò»¸ö¼ÓÃÜ¶ÔÏó
+			//è·å–ä¸€ä¸ªåŠ å¯†å¯¹è±¡
 			MessageDigest md = MessageDigest.getInstance("sha1");
-			//¼ÓÃÜ
+			//åŠ å¯†
 			byte[] digest = md.digest(src.getBytes());
 			char[] chars= {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
 			StringBuilder sb = new StringBuilder();
-			//´¦Àí¼ÓÃÜ½á¹û
+			//å¤„ç†åŠ å¯†ç»“æœ
 			for(byte b:digest) {
 				sb.append(chars[(b>>4)&15]);
 				sb.append(chars[b&15]);
@@ -110,16 +112,16 @@ public class WxService {
 		}
 		return null;
 	}
-	//½âÎöxmlÊı¾İ°ü	
+	//è§£æxmlæ•°æ®åŒ…
 	public static Map<String, String> parseRequest(InputStream is) {
 		Map<String, String> map = new HashMap<>();
 		SAXReader reader = new SAXReader();
 		try {
-			//¶ÁÈ¡ÊäÈëÁ÷£¬»ñÈ¡ÎÄµµ¶ÔÏó
+			//è¯»å–è¾“å…¥æµï¼Œè·å–æ–‡æ¡£å¯¹è±¡
 			Document document = reader.read(is);
-			//¸ù¾İÎÄµµ¶ÔÏó»ñÈ¡¸ù½Úµã
+			//æ ¹æ®æ–‡æ¡£å¯¹è±¡è·å–æ ¹èŠ‚ç‚¹
 			Element root = document.getRootElement();
-			//»ñÈ¡¸ù½ÚµãµÄËùÓĞµÄ×Ó½Úµã
+			//è·å–æ ¹èŠ‚ç‚¹çš„æ‰€æœ‰çš„å­èŠ‚ç‚¹
 			List<Element> elements = root.elements();
 			for(Element e:elements) {
 				map.put(e.getName(), e.getStringValue());
@@ -129,12 +131,12 @@ public class WxService {
 		}
 		return map;	
 	}
-	//ÓÃÓÚ´¦ÀíËùÓĞµÄÊÂ¼şºÍÏûÏ¢»Ø¸´	
+	//ç”¨äºå¤„ç†æ‰€æœ‰çš„äº‹ä»¶å’Œæ¶ˆæ¯çš„å›å¤
 	public static String getRespose(Map<String, String> requestMap) {
 		BaseMessage msg=null;
 		String msgType = requestMap.get("MsgType");
 		switch (msgType) {
-			//´¦ÀíÎÄ±¾ÏûÏ¢
+		//å¤„ç†æ–‡æœ¬æ¶ˆæ¯
 			case "text":
 				msg=dealTextMessage(requestMap);
 				break;
@@ -162,29 +164,28 @@ public class WxService {
 			default:
 				break;
 		}
-		//°ÑÏûÏ¢¶ÔÏó´¦ÀíÎªxmlÊı¾İ°ü
+		//æŠŠæ¶ˆæ¯å¯¹è±¡å¤„ç†ä¸ºxmlæ•°æ®åŒ…
 		if(msg!=null) {
 			return beanToXml(msg);
 		}
 		return null;
 	}
 	/**
-	 * ½øĞĞÍ¼Æ¬Ê¶±ğ
-	 * @param requestMap
+	 * è¿›è¡Œå›¾ç‰‡è¯†åˆ«
 	 */
 	private static BaseMessage dealImage(Map<String, String> requestMap) {
-		// ³õÊ¼»¯Ò»¸öAipOcr
+		// åˆå§‹åŒ–ä¸€ä¸ªAipOcr
 		AipOcr client = new AipOcr(APP_ID, API_KEY, SECRET_KEY);
-		// ¿ÉÑ¡£ºÉèÖÃÍøÂçÁ¬½Ó²ÎÊı
+		// å¯é€‰ï¼šè®¾ç½®ç½‘ç»œè¿æ¥å‚æ•°
 		client.setConnectionTimeoutInMillis(2000);
 		client.setSocketTimeoutInMillis(60000);
-		// µ÷ÓÃ½Ó¿Ú
+		// è°ƒç”¨æ¥å£
 		String path = requestMap.get("PicUrl");
 		
-		//½øĞĞÍøÂçÍ¼Æ¬µÄÊ¶±ğ
+		//è¿›è¡Œç½‘ç»œå›¾ç‰‡çš„è¯†åˆ«
 		org.json.JSONObject res = client.generalUrl(path, new HashMap<String,String>());
 		String json = res.toString();
-		//×ªÎªjsonObject
+		//è½¬ä¸ºjsonObject
 		JSONObject jsonObject = JSONObject.fromObject(json);
 		JSONArray jsonArray = jsonObject.getJSONArray("words_result");
 		Iterator<JSONObject> it = jsonArray.iterator();
@@ -197,8 +198,7 @@ public class WxService {
 	}
 
 	/**
-	 * ´¦ÀíÊÂ¼şÍÆËÍ
-	 * @param requestMap
+	 * å¤„ç†äº‹ä»¶æ¨é€
 	 */
 	private static BaseMessage dealEvent(Map<String, String> requestMap) {
 		String event = requestMap.get("Event");
@@ -216,8 +216,7 @@ public class WxService {
 
 
 	/**
-	 * ´¦ÀíviewÀàĞÍµÄ°´Å¥µÄ²Ëµ¥
-	 * @param requestMap
+	 * å¤„ç†viewç±»å‹çš„æŒ‰é’®çš„èœå•
 	 */
 	private static BaseMessage dealView(Map<String, String> requestMap) {
 		
@@ -225,18 +224,17 @@ public class WxService {
 	}
 
 	/**
-	 * ´¦Àíclick²Ëµ¥
-	 * @param requestMap
+	 * å¤„ç†clickèœå•
 	 */
 	private static BaseMessage dealClick(Map<String, String> requestMap) {
 		String key = requestMap.get("EventKey");
 		switch (key) {
-			//µã»÷Ò»²Ëµ¥µã
+			//ç‚¹å‡»ä¸€èœå•ç‚¹
 			case "1":
-				//´¦Àíµã»÷ÁËµÚÒ»¸öÒ»¼¶²Ëµ¥
-				return new TextMessage(requestMap, "ÄãµãÁËÒ»µãµÚÒ»¸öÒ»¼¶²Ëµ¥");
+				//å¤„ç†ç‚¹å‡»äº†ç¬¬ä¸€ä¸ªä¸€çº§èœå•
+				return new TextMessage(requestMap, "ä½ ç‚¹äº†ä¸€ç‚¹ç¬¬ä¸€ä¸ªä¸€çº§èœå•");
 			case "32":
-				//´¦Àíµã»÷ÁËµÚÈı¸öÒ»¼¶²Ëµ¥µÄµÚ¶ş¸ö×Ó²Ëµ¥
+				//å¤„ç†ç‚¹å‡»äº†ç¬¬ä¸‰ä¸ªä¸€çº§èœå•çš„ç¬¬äºŒä¸ªå­èœå•
 				break;
 			default:
 				break;
@@ -245,12 +243,11 @@ public class WxService {
 	}
 
 	/**
-	 * °ÑÏûÏ¢¶ÔÏó´¦ÀíÎªxmlÊı¾İ°ü
-	 * @param msg
+	 * æŠŠæ¶ˆæ¯å¯¹è±¡å¤„ç†ä¸ºxmlæ•°æ®åŒ…
 	 */
 	private static String beanToXml(BaseMessage msg) {
 		XStream stream = new XStream();
-		//ÉèÖÃĞèÒª´¦ÀíXStreamAlias("xml")×¢ÊÍµÄÀà
+		//è®¾ç½®éœ€è¦å¤„ç†XStreamAlias("xml")æ³¨é‡Šçš„ç±»
 		stream.processAnnotations(TextMessage.class);
 		stream.processAnnotations(ImageMessage.class);
 		stream.processAnnotations(MusicMessage.class);
@@ -262,24 +259,23 @@ public class WxService {
 	}
 
 	/**
-	 * ´¦ÀíÎÄ±¾ÏûÏ¢
-	 * @param requestMap
+	 * å¤„ç†æ–‡æœ¬æ¶ˆæ¯
 	 */
 	private static BaseMessage dealTextMessage(Map<String, String> requestMap) {
-		//ÓÃ»§·¢À´µÄÄÚÈİ
+		//ç”¨æˆ·å‘æ¥çš„å†…å®¹
 		String msg = requestMap.get("Content");
-		if(msg.equals("Í¼ÎÄ")) {
+		if(msg.equals("æé™")) {
 			List<Article> articles = new ArrayList<>();
-			articles.add(new Article("ÕâÊÇÍ¼ÎÄÏûÏ¢µÄ±êÌâ", "ÕâÊÇÍ¼ÎÄÏûÏ¢µÄÏêÏ¸½éÉÜ", "http://mmbiz.qpic.cn/mmbiz_jpg/dtRJz5K066YczqeHmWFZSPINM5evWoEvW21VZcLzAtkCjGQunCicDubN3v9JCgaibKaK0qGrZp3nXKMYgLQq3M6g/0", "http://www.baidu.com"));
+			articles.add(new Article("æé™æ˜¯ä¸ªä»™å¥³", "æé™ä¸ç”¨å‡è‚¥ï¼Œä¸€ç‚¹éƒ½ä¸èƒ–ï¼", "http://mmbiz.qpic.cn/mmbiz_jpg/RwRicImz9c1B7KXrlnYm5HRWPBE6VgvBnuicONnhc8S9rSIbdT3hOPiavz74efYmW4EvYczo2g1wZxqRE6K6pSzgQ/0", "http://www.baidu.com"));
 			NewsMessage nm = new NewsMessage(requestMap, articles);
 			return nm;
 		}
-		if(msg.equals("µÇÂ¼")) {
-			String url="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxb6777fffdf5b64a4&redirect_uri=http://www.6sdd.com/weixin/GetUserInfo&response_type=code&scope=snsapi_userinfo#wechat_redirect";
-			TextMessage tm = new TextMessage(requestMap, "µã»÷<a href=\""+url+"\">ÕâÀï</a>µÇÂ¼");
+		if(msg.equals("ç™»å½•")) {
+			String url="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx200a0055856f53c7&redirect_uri=http://b8u5yg.natappfree.cc/weChatProject/GetUserInfo&response_type=code&scope=snsapi_userinfo#wechat_redirect";
+			TextMessage tm = new TextMessage(requestMap, "ç‚¹å‡»<a href=\""+url+"\">è¿™é‡Œ</a>ç™»å½•");
 			return tm;
 		}
-		//µ÷ÓÃ·½·¨·µ»ØÁÄÌìµÄÄÚÈİ
+		//è°ƒç”¨æ–¹æ³•è¿”å›èŠå¤©çš„å†…å®¹
 		String resp = chat(msg);
 		TextMessage tm = new TextMessage(requestMap, resp);
 		return tm;
@@ -287,30 +283,29 @@ public class WxService {
 
 
 	/**
-	 * µ÷ÓÃÍ¼Áé»úÆ÷ÈËÁÄÌì
-	 * @param msg 	·¢ËÍµÄÏûÏ¢
+	 * è°ƒç”¨æœºå™¨äººèŠå¤©
 	 */
 	private static String chat(String msg) {
         String result =null;
-        String url ="http://op.juhe.cn/robot/index";//ÇëÇó½Ó¿ÚµØÖ·
-        Map params = new HashMap();//ÇëÇó²ÎÊı
-        params.put("key",APPKEY);//ÄúÉêÇëµ½µÄ±¾½Ó¿Ú×¨ÓÃµÄAPPKEY
-        params.put("info",msg);//Òª·¢ËÍ¸ø»úÆ÷ÈËµÄÄÚÈİ£¬²»Òª³¬¹ı30¸ö×Ö·û
-        params.put("dtype","");//·µ»ØµÄÊı¾İµÄ¸ñÊ½£¬json»òxml£¬Ä¬ÈÏÎªjson
-        params.put("loc","");//µØµã£¬Èç±±¾©ÖĞ¹Ø´å
-        params.put("lon","");//¾­¶È£¬¶«¾­116.234632£¨Ğ¡Êıµãºó±£Áô6Î»£©£¬ĞèÒªĞ´Îª116234632
-        params.put("lat","");//Î³¶È£¬±±Î³40.234632£¨Ğ¡Êıµãºó±£Áô6Î»£©£¬ĞèÒªĞ´Îª40234632
-        params.put("userid","");//1~32Î»£¬´ËuseridÕë¶ÔÄú×Ô¼ºµÄÃ¿Ò»¸öÓÃ»§£¬ÓÃÓÚÉÏÏÂÎÄµÄ¹ØÁª
+        String url ="http://op.juhe.cn/robot/index";//è¯·æ±‚æ¥å£åœ°å€
+        Map params = new HashMap();//è¯·æ±‚å‚æ•°
+        params.put("key",APPKEY);//æ‚¨ç”³è¯·åˆ°çš„æœ¬æ¥å£ä¸“ç”¨çš„APPKEY
+        params.put("info",msg);//è¦å‘é€ç»™æœºå™¨äººçš„å†…å®¹ï¼Œä¸è¦è¶…è¿‡30ä¸ªå­—ç¬¦
+        params.put("dtype","");//è¿”å›çš„æ•°æ®çš„æ ¼å¼ï¼Œjsonæˆ–xmlï¼Œé»˜è®¤ä¸ºjson
+        params.put("loc","");//åœ°ç‚¹ï¼Œå¦‚åŒ—äº¬ä¸­å…³æ‘
+        params.put("lon","");//ç»åº¦ï¼Œä¸œç»116.234632ï¼ˆå°æ•°ç‚¹åä¿ç•™6ä½ï¼‰ï¼Œéœ€è¦å†™ä¸º116234632
+        params.put("lat","");//çº¬åº¦ï¼ŒåŒ—çº¬40.234632ï¼ˆå°æ•°ç‚¹åä¿ç•™6ä½ï¼‰ï¼Œéœ€è¦å†™ä¸º40234632
+        params.put("userid","");//1~32ä½ï¼Œæ­¤useridé’ˆå¯¹æ‚¨è‡ªå·±çš„æ¯ä¸€ä¸ªç”¨æˆ·ï¼Œç”¨äºä¸Šä¸‹æ–‡çš„å…³è”
         try {
             result =Util.net(url, params, "GET");
-            //½âÎöjson
+            //è§£æjson
             JSONObject jsonObject = JSONObject.fromObject(result);
-            //È¡³öerror_code
+            //å–å‡ºerror_code
             int code = jsonObject.getInt("error_code");
             if(code!=0) {
             		return null;
             }
-            //È¡³ö·µ»ØµÄÏûÏ¢µÄÄÚÈİ
+            //å–å‡ºè¿”å›çš„æ¶ˆæ¯çš„å†…å®¹
             String resp = jsonObject.getJSONObject("result").getString("text");
             return resp;
         } catch (Exception e) {
@@ -320,90 +315,90 @@ public class WxService {
 	}
 	
 	/**
-	 * ÉÏ´«ÁÙÊ±ËØ²Ä
-	 * @param path	ÉÏ´«µÄÎÄ¼şµÄÂ·¾¶
-	 * @param type	ÉÏ´«µÄÎÄ¼şÀàĞÍ
+	 * ä¸Šä¼ ä¸´æ—¶ç´ æ
+	 * @param path	ä¸Šä¼ çš„æ–‡ä»¶çš„è·¯å¾„
+	 * @param type	ä¸Šä¼ çš„æ–‡ä»¶ç±»å‹
 	 */
-//	public static String upload(String path,String type) {
-//		File file = new File(path);
-//		//µØÖ·
-//		String url="https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=TYPE";
-//		url = url.replace("ACCESS_TOKEN", getAccessToken()).replace("TYPE", type);
-//		try {
-//			URL urlObj = new URL(url);
-//			//Ç¿×ªÎª°¸ÀıÁ¬½Ó
-//			HttpsURLConnection conn = (HttpsURLConnection) urlObj.openConnection();
-//			//ÉèÖÃÁ¬½ÓµÄĞÅÏ¢
-//			conn.setDoInput(true);
-//			conn.setDoOutput(true);
-//			conn.setUseCaches(false);
-//			//ÉèÖÃÇëÇóÍ·ĞÅÏ¢
-//			conn.setRequestProperty("Connection", "Keep-Alive");
-//			conn.setRequestProperty("Charset", "utf8");
-//			//Êı¾İµÄ±ß½ç
-//			String boundary = "-----"+System.currentTimeMillis();
-//			conn.setRequestProperty("Content-Type", "multipart/form-data;boundary="+boundary);
-//			//»ñÈ¡Êä³öÁ÷
-//			OutputStream out = conn.getOutputStream();
-//			//´´½¨ÎÄ¼şµÄÊäÈëÁ÷
-//			InputStream is = new FileInputStream(file);
-//			//µÚÒ»²¿·Ö£ºÍ·²¿ĞÅÏ¢
-//			//×¼±¸Í·²¿ĞÅÏ¢
-//			StringBuilder sb = new StringBuilder();
-//			sb.append("--");
-//			sb.append(boundary);
-//			sb.append("\r\n");
-//			sb.append("Content-Disposition:form-data;name=\"media\";filename=\""+file.getName()+"\"\r\n");
-//			sb.append("Content-Type:application/octet-stream\r\n\r\n");
-//			out.write(sb.toString().getBytes());
-//			System.out.println(sb.toString());
-//			//µÚ¶ş²¿·Ö£ºÎÄ¼şÄÚÈİ
-//			byte[] b = new byte[1024];
-//			int len;
-//			while((len=is.read(b))!=-1) {
-//				out.write(b, 0, len);
-//			}
-//			is.close();
-//			//µÚÈı²¿·Ö£ºÎ²²¿ĞÅÏ¢
-//			String foot = "\r\n--"+boundary+"--\r\n";
-//			out.write(foot.getBytes());
-//			out.flush();
-//			out.close();
-//			//¶ÁÈ¡Êı¾İ
-//			InputStream is2 = conn.getInputStream();
-//			StringBuilder resp = new StringBuilder();
-//			while((len=is2.read(b))!=-1) {
-//				resp.append(new String(b,0,len));
-//			}
-//			return resp.toString();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
-
-	/**
-	 * »ñÈ¡´ø²ÎÊı¶şÎ¬ÂëµÄticket
-	 */
-//	public static String getQrCodeTicket() {
-//		String at = getAccessToken();
-//		String url="https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token="+at;
-//		//Éú³ÉÁÙÊ±×Ö·û¶şÎ¬Âë
-//		String data="{\"expire_seconds\": 600, \"action_name\": \"QR_STR_SCENE\", \"action_info\": {\"scene\": {\"scene_str\": \"llzs\"}}}";
-//		String result = Util.post(url, data);
-//		String ticket = JSONObject.fromObject(result).getString("ticket");
-//		return ticket;
-//	}
+	public static String upload(String path,String type) {
+		File file = new File(path);
+		//åœ°å€
+		String url="https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=TYPE";
+		url = url.replace("ACCESS_TOKEN", getAccessToken()).replace("TYPE", type);
+		try {
+			URL urlObj = new URL(url);
+			//å¼ºè½¬ä¸ºæ¡ˆä¾‹è¿æ¥
+			HttpsURLConnection conn = (HttpsURLConnection) urlObj.openConnection();
+			//è®¾ç½®è¿æ¥çš„ä¿¡æ¯
+			conn.setDoInput(true);
+			conn.setDoOutput(true);
+			conn.setUseCaches(false);
+			//è®¾ç½®è¯·æ±‚å¤´ä¿¡æ¯
+			conn.setRequestProperty("Connection", "Keep-Alive");
+			conn.setRequestProperty("Charset", "utf8");
+			//æ•°æ®çš„è¾¹ç•Œ
+			String boundary = "-----"+System.currentTimeMillis();
+			conn.setRequestProperty("Content-Type", "multipart/form-data;boundary="+boundary);
+			//è·å–è¾“å‡ºæµ
+			OutputStream out = conn.getOutputStream();
+			//åˆ›å»ºæ–‡ä»¶çš„è¾“å…¥æµ
+			InputStream is = new FileInputStream(file);
+			//ç¬¬ä¸€éƒ¨åˆ†ï¼šå¤´éƒ¨ä¿¡æ¯
+			//å‡†å¤‡å¤´éƒ¨ä¿¡æ¯
+			StringBuilder sb = new StringBuilder();
+			sb.append("--");
+			sb.append(boundary);
+			sb.append("\r\n");
+			sb.append("Content-Disposition:form-data;name=\"media\";filename=\""+file.getName()+"\"\r\n");
+			sb.append("Content-Type:application/octet-stream\r\n\r\n");
+			out.write(sb.toString().getBytes());
+			System.out.println(sb.toString());
+			//ç¬¬äºŒéƒ¨åˆ†ï¼šæ–‡ä»¶å†…å®¹
+			byte[] b = new byte[1024];
+			int len;
+			while((len=is.read(b))!=-1) {
+				out.write(b, 0, len);
+			}
+			is.close();
+			//ç¬¬ä¸‰éƒ¨åˆ†ï¼šå°¾éƒ¨ä¿¡æ¯
+			String foot = "\r\n--"+boundary+"--\r\n";
+			out.write(foot.getBytes());
+			out.flush();
+			out.close();
+			//è¯»å–æ•°æ®
+			InputStream is2 = conn.getInputStream();
+			StringBuilder resp = new StringBuilder();
+			while((len=is2.read(b))!=-1) {
+				resp.append(new String(b,0,len));
+			}
+			return resp.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	/**
-	 * »ñÈ¡ÓÃ»§µÄ»ù±¾ĞÅÏ¢
+	 * è·å–å¸¦å‚æ•°äºŒç»´ç çš„ticket
 	 */
-//	public static String getUserInfo(String openid) {
-//		String url="https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
-//		url = url.replace("ACCESS_TOKEN", getAccessToken()).replace("OPENID", openid);
-//		String result = Util.get(url);
-//		return result;
-//	}
+	public static String getQrCodeTicket() {
+		String at = getAccessToken();
+		String url="https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token="+at;
+		//ç”Ÿæˆä¸´æ—¶å­—ç¬¦äºŒç»´ç 
+		String data="{\"expire_seconds\": 600, \"action_name\": \"QR_STR_SCENE\", \"action_info\": {\"scene\": {\"scene_str\": \"lijingCute\"}}}";
+		String result = Util.post(url, data);
+		String ticket = JSONObject.fromObject(result).getString("ticket");
+		return ticket;
+	}
+	
+	/**
+	 * è·å–ç”¨æˆ·çš„åŸºæœ¬ä¿¡æ¯
+	 */
+	public static String getUserInfo(String openid) {
+		String url="https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
+		url = url.replace("ACCESS_TOKEN", getAccessToken()).replace("OPENID", openid);
+		String result = Util.get(url);
+		return result;
+	}
 
 }
 

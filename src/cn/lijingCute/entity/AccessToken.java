@@ -1,9 +1,9 @@
 package cn.lijingCute.entity;
 
 public class AccessToken {
-	//获取token	
+	//鑾峰彇token	
 	private String accessToken;
-	//过期时间	
+	//杩囨湡鏃堕棿
 	private long expireTime;
 
 	public String getAccessToken() {
@@ -25,11 +25,12 @@ public class AccessToken {
 	public AccessToken(String accessToken, String expireIn) {
 		super();
 		this.accessToken = accessToken;
+		//杩囨湡鏃堕棿=褰撳墠鏃堕棿+鎺ュ叆鏃剁殑鏃堕棿
 		expireTime = System.currentTimeMillis()+Integer.parseInt(expireIn)*1000;
 	}
 	
 	/**
-	 * 判断token是否过期
+	 * 鍒ゆ柇token鏄惁杩囨湡
 	 */
 	public boolean isExpired() {
 		return System.currentTimeMillis()>expireTime;
